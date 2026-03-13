@@ -1,0 +1,42 @@
+{
+  "name": "gh-control",
+  "version": "1.0.0",
+  "description": "Full GitHub control panel — Next.js, MongoDB, Redis, BullMQ",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "worker": "node src/worker/index.js",
+    "dev:all": "concurrently \"npm run dev\" \"npm run worker\""
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "axios": "^1.7.2",
+    "mongoose": "^8.5.1",
+    "ioredis": "^5.4.1",
+    "bullmq": "^5.12.5",
+    "octokit": "^4.0.2",
+    "@octokit/rest": "^21.0.0",
+    "@octokit/webhooks": "^13.3.0",
+    "morgan": "^1.10.0",
+    "date-fns": "^3.6.0",
+    "lucide-react": "^0.408.0",
+    "clsx": "^2.1.1",
+    "concurrently": "^8.2.2",
+    "crypto": "^1.0.1",
+    "tailwindcss": "^3.4.4",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5"
+  }
+}
