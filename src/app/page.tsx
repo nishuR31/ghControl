@@ -80,7 +80,7 @@ const NAV_GROUPS = [
 const LS = {
   get:  <T,>(k: string, d?: T): T => {
     if (typeof window === 'undefined') return d as T
-    try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d } catch { return d as T }
+    try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d as T } catch { return d as T }
   },
   set:  (k: string, v: unknown) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} },
   del:  (k: string)             => { try { localStorage.removeItem(k) } catch {} },
