@@ -499,7 +499,7 @@ function Sidebar({ user, tab, setTab, onDisconnect, onSettings }: {
   const collapsed = !sidebarOpen
 
   return (
-    <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+    <aside className={`sidebar ml-10 pl-10  ${collapsed ? 'collapsed' : ''}`}>
       {/* Brand */}
       <div className="sidebar-brand">
         <button className="brand-icon" onClick={toggleSidebar} style={{ cursor: 'pointer', border: 'none' }} title="Toggle sidebar">
