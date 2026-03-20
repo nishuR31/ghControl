@@ -7,6 +7,8 @@ import {
   createContext,
   useContext,
 } from "react";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
 import {
   GitBranch,
   GitCommit,
@@ -1009,11 +1011,40 @@ function Sidebar({
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   ROOT APP
-══════════════════════════════════════════════════════════════════════ */
+/**
+ * Main App Component - Wraps the entire dashboard
+ * Uses useAuth from context to manage authentication
+ */
 export default function App() {
-  const [token, setToken] = useState("");
+  const { token, isAuthenticated, clearToken } = useAuth();
+  const router = useRouter();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated || !token) {
+    return null;
+  }
+
+  return <DashboardContent token={token} onLogout={() => clearToken()} />;
+}
+
+/**
+ * Dashboard Content Component - Shows the actual dashboard
+ * Separated from App so we can manage auth separately
+ */
+function DashboardContent({
+  token,
+  onLogout,
+}: {
+  token: string;
+  onLogout: () => void;
+}) {
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [tab, setTab] = useState("overview");
   const [theme, setThemeS] = useState<Theme>("dark");
@@ -1028,12 +1059,9 @@ export default function App() {
 
   // Load persisted prefs
   useEffect(() => {
-    const t = LS.get<string>("gh_token");
     const u = LS.get<any>("gh_user");
-    if (t && u) {
-      setToken(t);
-      setUser(u);
-    }
+    if (u) setUser(u);
+
     const th = LS.get<Theme>("gh_theme", "dark");
     setThemeS(th);
     const ac = LS.get<Accent>("gh_accent", "violet");
@@ -1042,7 +1070,22 @@ export default function App() {
     setCompactS(cp);
     const sb = LS.get<boolean>("gh_sidebar", true);
     setSidebar(sb);
-  }, []);
+
+    // Fetch user if not cached
+    if (!u) {
+      fetch("/api/github/user", {
+        headers: { "x-github-token": token },
+      })
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.success) {
+            setUser(d.data);
+            LS.set("gh_user", d.data);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [token]);
 
   // Apply theme/accent to DOM
   useEffect(() => {
@@ -1077,19 +1120,10 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(null), 3600);
   }
 
-  function onConnect(t: string, u: any) {
-    setToken(t);
-    setUser(u);
-    LS.set("gh_token", t);
-    LS.set("gh_user", u);
-    show(`Connected as @${u.login}`);
-  }
-
   function disconnect() {
-    setToken("");
-    setUser(null);
-    LS.del("gh_token");
     LS.del("gh_user");
+    onLogout();
+    router.push("/login");
   }
 
   const api = useApi(token);
@@ -1105,12 +1139,19 @@ export default function App() {
     show,
   };
 
-  if (!token || !user) {
+  if (!user) {
     return (
-      <Ctx.Provider value={ctx}>
-        <LoginScreen onConnect={onConnect} />
-        {toast && <div className={`toast show ${toast.type}`}>{toast.msg}</div>}
-      </Ctx.Provider>
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--bg-app)",
+        }}
+      >
+        <div className="spinner" />
+      </div>
     );
   }
 
