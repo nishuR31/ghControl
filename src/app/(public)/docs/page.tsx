@@ -4,6 +4,15 @@ export const metadata: Metadata = {
   title: "Docs | GH Control",
   description:
     "GH Control documentation for setup, token scopes, dashboard usage, jobs, webhooks, and troubleshooting.",
+  alternates: {
+    canonical: "/docs",
+  },
+  openGraph: {
+    title: "Docs | GH Control",
+    description:
+      "Setup, token scopes, dashboard usage, jobs, webhooks, and troubleshooting guides for GH Control.",
+    url: "/docs",
+  },
 };
 
 const links = [

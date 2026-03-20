@@ -4,6 +4,15 @@ export const metadata: Metadata = {
   title: "Privacy Policy | GH Control",
   description:
     "Privacy policy for GH Control, including token handling, local storage, telemetry boundaries, and security practices.",
+  alternates: {
+    canonical: "/privacy",
+  },
+  openGraph: {
+    title: "Privacy Policy | GH Control",
+    description:
+      "How GH Control handles tokens, local storage, and operational data for dashboard reliability and security.",
+    url: "/privacy",
+  },
 };
 
 const links = [

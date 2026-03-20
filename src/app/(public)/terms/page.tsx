@@ -4,6 +4,15 @@ export const metadata: Metadata = {
   title: "Terms of Use | GH Control",
   description:
     "Terms of use for GH Control describing service usage, user responsibilities, access controls, and limitations.",
+  alternates: {
+    canonical: "/terms",
+  },
+  openGraph: {
+    title: "Terms of Use | GH Control",
+    description:
+      "Service scope, user responsibilities, and limitations for using GH Control.",
+    url: "/terms",
+  },
 };
 
 const links = [

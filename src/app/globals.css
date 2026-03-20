@@ -411,6 +411,34 @@ code,
   overflow: hidden;
   position: relative;
   z-index: 1;
+  --mx: 50%;
+  --my: 18%;
+}
+
+[data-mousefx="on"][data-animations="on"] .app-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(
+    420px circle at var(--mx) var(--my),
+    color-mix(in srgb, var(--accent) 16%, transparent),
+    transparent 60%
+  );
+  transition: background 0.2s ease;
+}
+
+[data-seasonal="on"] .app-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(16, 185, 129, 0.09), transparent 22%),
+    radial-gradient(circle at 88% 14%, rgba(59, 130, 246, 0.08), transparent 24%),
+    radial-gradient(circle at 70% 90%, rgba(245, 158, 11, 0.08), transparent 26%);
 }
 
 /* ── Sidebar ── */
@@ -686,6 +714,46 @@ code,
   transition:
     background 0.25s,
     border-color 0.25s;
+}
+
+[data-surface="glass"] .card,
+[data-surface="glass"] .stat-card,
+[data-surface="glass"] .settings-panel,
+[data-surface="glass"] .sidebar {
+  background: color-mix(in srgb, var(--bg-raised) 75%, transparent);
+  backdrop-filter: blur(14px) saturate(120%);
+  border-color: color-mix(in srgb, var(--accent) 20%, var(--border-subtle));
+}
+
+[data-surface="clay"] .card,
+[data-surface="clay"] .stat-card,
+[data-surface="clay"] .settings-panel,
+[data-surface="clay"] .sidebar {
+  border-radius: 20px;
+  border-color: color-mix(in srgb, var(--accent) 14%, var(--border-subtle));
+  box-shadow:
+    inset 2px 2px 4px rgba(255, 255, 255, 0.04),
+    inset -2px -2px 6px rgba(0, 0, 0, 0.22),
+    var(--shadow-md);
+}
+
+[data-theme="light"][data-surface="clay"] .card,
+[data-theme="light"][data-surface="clay"] .stat-card,
+[data-theme="light"][data-surface="clay"] .settings-panel,
+[data-theme="light"][data-surface="clay"] .sidebar {
+  box-shadow:
+    inset 1px 1px 3px rgba(255, 255, 255, 0.75),
+    inset -1px -1px 3px rgba(148, 163, 184, 0.35),
+    var(--shadow-md);
+}
+
+[data-surface="minimal"] .card,
+[data-surface="minimal"] .stat-card,
+[data-surface="minimal"] .settings-panel,
+[data-surface="minimal"] .sidebar {
+  border-radius: 8px;
+  box-shadow: none;
+  border-color: var(--border-default);
 }
 
 .card-header {
@@ -1223,6 +1291,27 @@ textarea.input {
   }
 }
 
+@media (max-width: 760px) {
+  .settings-panel {
+    width: min(100vw, 420px);
+  }
+}
+
+@media (max-width: 520px) {
+  .settings-panel {
+    width: 100vw;
+    border-left: none;
+  }
+  .settings-panel-body {
+    padding: 16px;
+    gap: 18px;
+  }
+  .theme-pills {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 /* ═══════════════════════════════════════════════════
    SETTINGS PANEL
 ═══════════════════════════════════════════════════ */
@@ -1384,6 +1473,13 @@ textarea.input {
 }
 .toggle.on::after {
   transform: translateX(16px);
+}
+
+[data-animations="off"] *,
+[data-animations="off"] *::before,
+[data-animations="off"] *::after {
+  animation: none !important;
+  transition: none !important;
 }
 
 /* ═══════════════════════════════════════════════════

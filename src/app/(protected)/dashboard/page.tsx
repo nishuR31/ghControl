@@ -68,6 +68,7 @@ import {
 ══════════════════════════════════════════════════════════════════════ */
 type Theme = "dark" | "dim" | "light";
 type Accent = "violet" | "blue" | "green" | "amber" | "rose";
+type SurfaceStyle = "default" | "glass" | "clay" | "minimal";
 
 const ACCENTS: { id: Accent; color: string; label: string }[] = [
   { id: "violet", color: "#8b5cf6", label: "Violet" },
@@ -157,10 +158,20 @@ interface AppCtx {
   theme: Theme;
   accent: Accent;
   compact: boolean;
+  useDeviceTheme: boolean;
+  surfaceStyle: SurfaceStyle;
+  seasonalFx: boolean;
+  mouseFx: boolean;
+  animationsOn: boolean;
   sidebarOpen: boolean;
   setTheme: (t: Theme) => void;
   setAccent: (a: Accent) => void;
   setCompact: (c: boolean) => void;
+  setUseDeviceTheme: (v: boolean) => void;
+  setSurfaceStyle: (s: SurfaceStyle) => void;
+  setSeasonalFx: (v: boolean) => void;
+  setMouseFx: (v: boolean) => void;
+  setAnimationsOn: (v: boolean) => void;
   toggleSidebar: () => void;
   show: (msg: string, type?: "success" | "error" | "info") => void;
 }
@@ -790,12 +801,36 @@ function LoginScreen({
    SETTINGS PANEL
 ══════════════════════════════════════════════════════════════════════ */
 function SettingsPanel({ onClose }: { onClose: () => void }) {
-  const { theme, setTheme, accent, setAccent, compact, setCompact } = useApp();
+  const {
+    theme,
+    setTheme,
+    accent,
+    setAccent,
+    compact,
+    setCompact,
+    useDeviceTheme,
+    setUseDeviceTheme,
+    surfaceStyle,
+    setSurfaceStyle,
+    seasonalFx,
+    setSeasonalFx,
+    mouseFx,
+    setMouseFx,
+    animationsOn,
+    setAnimationsOn,
+  } = useApp();
 
   const themes: { id: Theme; icon: any; label: string }[] = [
     { id: "dark", icon: Moon, label: "Dark" },
     { id: "dim", icon: Monitor, label: "Dim" },
     { id: "light", icon: Sun, label: "Light" },
+  ];
+
+  const surfaces: { id: SurfaceStyle; label: string }[] = [
+    { id: "default", label: "Default" },
+    { id: "glass", label: "Glass" },
+    { id: "clay", label: "Clay" },
+    { id: "minimal", label: "Minimal" },
   ];
 
   return (
@@ -812,15 +847,44 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
           {/* Theme */}
           <div className="settings-section">
             <h4>Theme</h4>
+            <div className="toggle-row">
+              <div>
+                <div className="toggle-label">Use Device Theme</div>
+                <div className="toggle-sub">Auto-sync light/dark with your OS</div>
+              </div>
+              <button
+                className={`toggle ${useDeviceTheme ? "on" : ""}`}
+                onClick={() => setUseDeviceTheme(!useDeviceTheme)}
+              />
+            </div>
             <div className="theme-pills">
               {themes.map(({ id, icon: Icon, label }) => (
                 <button
                   key={id}
                   className={`theme-pill ${theme === id ? "active" : ""}`}
+                  disabled={useDeviceTheme}
+                  style={
+                    useDeviceTheme ? { opacity: 0.55, cursor: "not-allowed" } : undefined
+                  }
                   onClick={() => setTheme(id)}
                 >
                   <Icon size={16} />
                   {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="settings-section">
+            <h4>Surface Style</h4>
+            <div className="theme-pills">
+              {surfaces.map((s) => (
+                <button
+                  key={s.id}
+                  className={`theme-pill ${surfaceStyle === s.id ? "active" : ""}`}
+                  onClick={() => setSurfaceStyle(s.id)}
+                >
+                  {s.label}
                 </button>
               ))}
             </div>
@@ -857,6 +921,36 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
               <button
                 className={`toggle ${compact ? "on" : ""}`}
                 onClick={() => setCompact(!compact)}
+              />
+            </div>
+            <div className="toggle-row">
+              <div>
+                <div className="toggle-label">Seasonal Tweaks</div>
+                <div className="toggle-sub">Enable seasonal decorative accents</div>
+              </div>
+              <button
+                className={`toggle ${seasonalFx ? "on" : ""}`}
+                onClick={() => setSeasonalFx(!seasonalFx)}
+              />
+            </div>
+            <div className="toggle-row">
+              <div>
+                <div className="toggle-label">Mouse Animations</div>
+                <div className="toggle-sub">Pointer-reactive highlight effect</div>
+              </div>
+              <button
+                className={`toggle ${mouseFx ? "on" : ""}`}
+                onClick={() => setMouseFx(!mouseFx)}
+              />
+            </div>
+            <div className="toggle-row">
+              <div>
+                <div className="toggle-label">Other Animations</div>
+                <div className="toggle-sub">Enable transitions and motion effects</div>
+              </div>
+              <button
+                className={`toggle ${animationsOn ? "on" : ""}`}
+                onClick={() => setAnimationsOn(!animationsOn)}
               />
             </div>
           </div>
@@ -1050,6 +1144,12 @@ function DashboardContent({
   const [theme, setThemeS] = useState<Theme>("dark");
   const [accent, setAccentS] = useState<Accent>("violet");
   const [compact, setCompactS] = useState(false);
+  const [useDeviceTheme, setUseDeviceThemeS] = useState(false);
+  const [surfaceStyle, setSurfaceStyleS] = useState<SurfaceStyle>("default");
+  const [seasonalFx, setSeasonalFxS] = useState(false);
+  const [mouseFx, setMouseFxS] = useState(true);
+  const [animationsOn, setAnimationsOnS] = useState(true);
+  const [systemTheme, setSystemTheme] = useState<"light" | "dark">("dark");
   const [sidebar, setSidebar] = useState(true);
   const [settings, setSettings] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: string } | null>(
@@ -1068,6 +1168,16 @@ function DashboardContent({
     setAccentS(ac);
     const cp = LS.get<boolean>("gh_compact", false);
     setCompactS(cp);
+    const ud = LS.get<boolean>("gh_use_device_theme", false);
+    setUseDeviceThemeS(ud);
+    const sf = LS.get<SurfaceStyle>("gh_surface", "default");
+    setSurfaceStyleS(sf);
+    const se = LS.get<boolean>("gh_seasonal_fx", false);
+    setSeasonalFxS(se);
+    const mf = LS.get<boolean>("gh_mouse_fx", true);
+    setMouseFxS(mf);
+    const an = LS.get<boolean>("gh_animations", true);
+    setAnimationsOnS(an);
     const sb = LS.get<boolean>("gh_sidebar", true);
     setSidebar(sb);
 
@@ -1087,13 +1197,41 @@ function DashboardContent({
     }
   }, [token]);
 
-  // Apply theme/accent to DOM
+  // Apply theme/accent/effects to DOM
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+    const mq = window.matchMedia("(prefers-color-scheme: light)");
+    const sync = () => setSystemTheme(mq.matches ? "light" : "dark");
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    const resolvedTheme =
+      useDeviceTheme ? (systemTheme === "light" ? "light" : "dark") : theme;
+    document.documentElement.setAttribute("data-theme", resolvedTheme);
+  }, [theme, useDeviceTheme, systemTheme]);
   useEffect(() => {
     document.documentElement.setAttribute("data-accent", accent);
   }, [accent]);
+  useEffect(() => {
+    document.documentElement.setAttribute("data-surface", surfaceStyle);
+  }, [surfaceStyle]);
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-seasonal",
+      seasonalFx ? "on" : "off",
+    );
+  }, [seasonalFx]);
+  useEffect(() => {
+    document.documentElement.setAttribute("data-mousefx", mouseFx ? "on" : "off");
+  }, [mouseFx]);
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-animations",
+      animationsOn ? "on" : "off",
+    );
+  }, [animationsOn]);
 
   function setTheme(t: Theme) {
     setThemeS(t);
@@ -1106,6 +1244,26 @@ function DashboardContent({
   function setCompact(c: boolean) {
     setCompactS(c);
     LS.set("gh_compact", c);
+  }
+  function setUseDeviceTheme(v: boolean) {
+    setUseDeviceThemeS(v);
+    LS.set("gh_use_device_theme", v);
+  }
+  function setSurfaceStyle(s: SurfaceStyle) {
+    setSurfaceStyleS(s);
+    LS.set("gh_surface", s);
+  }
+  function setSeasonalFx(v: boolean) {
+    setSeasonalFxS(v);
+    LS.set("gh_seasonal_fx", v);
+  }
+  function setMouseFx(v: boolean) {
+    setMouseFxS(v);
+    LS.set("gh_mouse_fx", v);
+  }
+  function setAnimationsOn(v: boolean) {
+    setAnimationsOnS(v);
+    LS.set("gh_animations", v);
   }
   function toggleSidebar() {
     setSidebar((s) => {
@@ -1131,10 +1289,20 @@ function DashboardContent({
     theme,
     accent,
     compact,
+    useDeviceTheme,
+    surfaceStyle,
+    seasonalFx,
+    mouseFx,
+    animationsOn,
     sidebarOpen: sidebar,
     setTheme,
     setAccent,
     setCompact,
+    setUseDeviceTheme,
+    setSurfaceStyle,
+    setSeasonalFx,
+    setMouseFx,
+    setAnimationsOn,
     toggleSidebar,
     show,
   };
@@ -1159,7 +1327,17 @@ function DashboardContent({
 
   return (
     <Ctx.Provider value={ctx}>
-      <div className="app-shell">
+      <div
+        className="app-shell"
+        onMouseMove={(e) => {
+          if (!mouseFx || !animationsOn) return;
+          const rect = e.currentTarget.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          e.currentTarget.style.setProperty("--mx", `${x}%`);
+          e.currentTarget.style.setProperty("--my", `${y}%`);
+        }}
+      >
         <Sidebar
           user={user}
           tab={tab}

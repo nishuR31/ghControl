@@ -1,3 +1,16 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    default: "GH Control",
+    template: "%s | GH Control",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "GH Control",
+  },
+};
+
 export default function PublicLayout({
   children,
 }: {

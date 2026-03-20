@@ -4,6 +4,15 @@ export const metadata: Metadata = {
   title: "Help | GH Control",
   description:
     "Help center for GH Control: account setup, token issues, dashboard troubleshooting, and support guidance.",
+  alternates: {
+    canonical: "/help",
+  },
+  openGraph: {
+    title: "Help | GH Control",
+    description:
+      "Support and troubleshooting guidance for GH Control setup, permissions, and dashboard operations.",
+    url: "/help",
+  },
 };
 
 const links = [

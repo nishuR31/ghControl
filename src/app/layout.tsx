@@ -2,20 +2,53 @@ import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@/lib/auth-context";
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gh-control.app";
+
 export const metadata: Metadata = {
-  title: "GH Control",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "GH Control",
+    template: "%s | GH Control",
+  },
   description:
     "Personal GitHub command center - Manage repos, workflows, webhooks, and jobs from a single dashboard",
+  applicationName: "GH Control",
+  keywords: [
+    "GitHub dashboard",
+    "GitHub control panel",
+    "GitHub automation",
+    "GitHub webhooks",
+    "GitHub jobs",
+    "BullMQ",
+    "Redis",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
     title: "GH Control",
-    description: "Power-user GitHub control panel",
+    description:
+      "Power-user GitHub command center for repos, pull requests, webhooks, notifications, and job operations.",
     type: "website",
-    url: "https://gh-control.app",
+    url: siteUrl,
+    siteName: "GH Control",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: "GH Control",
-    description: "Consolidated GitHub control panel",
+    description: "Consolidated GitHub command center",
   },
 };
 

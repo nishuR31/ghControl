@@ -8,6 +8,23 @@ import { GitBranch, GitPullRequest, Zap, Shield } from "lucide-react";
 export default function HomePage() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://gh-control.app";
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "GH Control",
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Web",
+    url: siteUrl,
+    description:
+      "Power-user GitHub command center for managing repositories, pull requests, webhooks, notifications, and jobs from one dashboard.",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -17,6 +34,10 @@ export default function HomePage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-app)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       {/* Header/Nav */}
       <div
         style={{
