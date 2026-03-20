@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongodb";
-import { WebhookEvent } from "@/lib/models";
 import { webhookQueue } from "@/lib/queues";
+import { logActivity } from "@/lib/activity-log";
 import crypto from "crypto";
 
 export async function GET() {
@@ -41,33 +40,37 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    await connectDB();
-    const doc = await WebhookEvent.findOneAndUpdate(
-      { delivery },
-      {
-        delivery,
-        event,
-        repository: payload.repository?.full_name,
-        sender: payload.sender?.login,
-        action: payload.action,
-        payload,
-        receivedAt: new Date(),
-      },
-      { upsert: true, new: true },
-    );
-
     // Queue for processing
     await webhookQueue.add(
       event,
-      { eventId: doc._id.toString(), event, payload },
+      { eventId: delivery, event, payload },
       {
         attempts: 2,
         removeOnComplete: 200,
         removeOnFail: 100,
       },
     );
+
+    const logExternal =
+      (process.env.LOG_EXTERNAL_WEBHOOKS || "false").toLowerCase() === "true";
+    if (logExternal) {
+      await logActivity({
+        source: "external",
+        type: `webhook:${event}`,
+        action: payload.action || "received",
+        status: "success",
+        repo: payload.repository?.full_name,
+        actor: payload.sender?.login,
+        payload: {
+          delivery,
+          repository: payload.repository?.full_name,
+          sender: payload.sender?.login,
+          action: payload.action,
+        },
+      });
+    }
   } catch (e) {
-    console.error("[Webhook] DB error:", e);
+    console.error("[Webhook] processing error:", e);
   }
 
   return NextResponse.json({ received: true, event, delivery });

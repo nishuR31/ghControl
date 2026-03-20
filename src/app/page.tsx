@@ -739,7 +739,7 @@ function LoginScreen({
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: "1fr 1fr 1fr",
               gap: 8,
               marginTop: 16,
               paddingTop: 16,
@@ -2969,7 +2969,8 @@ function WebhooksTab({ api, show }: any) {
       <Card title="Webhook setup help">
         <div style={{ padding: "14px 18px", display: "grid", gap: 10 }}>
           <p style={{ fontSize: 12.5, color: "var(--text-secondary)" }}>
-            Use a Personal Access Token with repository access and webhook scope to create hooks.
+            Use a Personal Access Token with repository access and webhook scope
+            to create hooks.
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {["repo", "admin:repo_hook", "read:user"].map((scope) => (
@@ -4010,7 +4011,7 @@ function EventsTab({ show }: any) {
   return (
     <PageLayout
       title="Webhook Events"
-      subtitle="Incoming events stored in MongoDB"
+      subtitle="App-triggered activity logs (Redis first, compact Mongo backup)"
       actions={
         <>
           <div className="search-wrap">
@@ -4034,8 +4035,8 @@ function EventsTab({ show }: any) {
       : !events.length ?
         <Empty
           icon={Activity}
-          title="No webhook events yet"
-          body="Point a repo webhook at your receiver URL to start capturing events"
+          title="No activity logs yet"
+          body="Actions you run from this GH tool will appear here"
         />
       : <Card title={`${events.length} events`}>
           {events.map((e: any, i: number) => (
