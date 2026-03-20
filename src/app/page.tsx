@@ -749,6 +749,7 @@ function LoginScreen({
             {[
               { icon: Shield, label: "Token local only" },
               { icon: Zap, label: "Redis caching" },
+              { icon: Database, label: "Mongodb Logs" },
             ].map(({ icon: Icon, label }) => (
               <div
                 key={label}
@@ -2965,6 +2966,44 @@ function WebhooksTab({ api, show }: any) {
         </button>
       </Banner>
 
+      <Card title="Webhook setup help">
+        <div style={{ padding: "14px 18px", display: "grid", gap: 10 }}>
+          <p style={{ fontSize: 12.5, color: "var(--text-secondary)" }}>
+            Use a Personal Access Token with repository access and webhook scope to create hooks.
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {["repo", "admin:repo_hook", "read:user"].map((scope) => (
+              <code
+                key={scope}
+                style={{
+                  fontSize: 11.5,
+                  background: "var(--bg-overlay)",
+                  color: "var(--accent-text)",
+                  padding: "2px 6px",
+                  borderRadius: 4,
+                  border: "1px solid var(--accent-border)",
+                  fontFamily: "var(--font-code)",
+                }}
+              >
+                {scope}
+              </code>
+            ))}
+          </div>
+          <p style={{ fontSize: 12, color: "var(--text-tertiary)" }}>
+            For this deployment, set Payload URL to:
+            <span
+              style={{
+                marginLeft: 6,
+                color: "var(--accent-text)",
+                fontFamily: "var(--font-code)",
+              }}
+            >
+              https://gh-control-nishu.vercel.app/api/webhooks/receive
+            </span>
+          </p>
+        </div>
+      </Card>
+
       {open && (
         <FormPanel cols={2}>
           <FI
@@ -2974,6 +3013,14 @@ function WebhooksTab({ api, show }: any) {
             onChange={(e) => setForm((p) => ({ ...p, url: e.target.value }))}
             placeholder="https://yourapp.vercel.app/api/webhooks/receive"
           />
+          <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
+            <button
+              className="btn btn-sm"
+              onClick={() => setForm((p) => ({ ...p, url: receiverUrl }))}
+            >
+              Use receiver URL
+            </button>
+          </div>
           <FI
             label="Events (comma-sep)"
             value={form.events}
