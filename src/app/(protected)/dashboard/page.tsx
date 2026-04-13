@@ -1368,7 +1368,7 @@ function DashboardContent({
         />
 
         {/* Mobile overlay when sidebar is open */}
-        {!sidebar && (
+        {sidebar && (
           <div className="mobile-overlay" onClick={() => toggleSidebar()} />
         )}
 
