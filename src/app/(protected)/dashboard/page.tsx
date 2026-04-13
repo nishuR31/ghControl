@@ -839,7 +839,11 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
       <div className="settings-panel">
         <div className="settings-panel-header">
           <span style={{ fontWeight: 700, fontSize: 15 }}>Settings</span>
-          <button className="btn btn-ghost btn-icon-sm" onClick={onClose}>
+          <button
+            title="btnClose"
+            className="btn btn-ghost btn-icon-sm"
+            onClick={onClose}
+          >
             <X size={16} />
           </button>
         </div>
@@ -997,7 +1001,7 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
 
 /* ══════════════════════════════════════════════════════════════════════
    SIDEBAR
-══════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════════== */
 function Sidebar({
   user,
   tab,
