@@ -436,9 +436,21 @@ code,
   pointer-events: none;
   z-index: 2;
   background:
-    radial-gradient(circle at 12% 10%, rgba(16, 185, 129, 0.09), transparent 22%),
-    radial-gradient(circle at 88% 14%, rgba(59, 130, 246, 0.08), transparent 24%),
-    radial-gradient(circle at 70% 90%, rgba(245, 158, 11, 0.08), transparent 26%);
+    radial-gradient(
+      circle at 12% 10%,
+      rgba(16, 185, 129, 0.09),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 88% 14%,
+      rgba(59, 130, 246, 0.08),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 70% 90%,
+      rgba(245, 158, 11, 0.08),
+      transparent 26%
+    );
 }
 
 /* ── Sidebar ── */
@@ -459,6 +471,49 @@ code,
 
 .sidebar.collapsed {
   width: var(--sidebar-w-sm);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sidebar.collapsed:hover {
+    width: var(--sidebar-w);
+  }
+
+  .sidebar.collapsed:hover .brand-text {
+    opacity: 1;
+    width: auto;
+    pointer-events: auto;
+  }
+
+  .sidebar.collapsed:hover .sidebar-brand {
+    justify-content: flex-start;
+  }
+
+  .sidebar.collapsed:hover .user-chip {
+    padding: 8px 10px;
+    justify-content: flex-start;
+  }
+
+  .sidebar.collapsed:hover .user-meta {
+    display: block;
+  }
+
+  .sidebar.collapsed:hover .nav-section-label {
+    opacity: 1;
+  }
+
+  .sidebar.collapsed:hover .nav-item {
+    justify-content: flex-start;
+    padding: 8px 10px;
+  }
+
+  .sidebar.collapsed:hover .nav-label,
+  .sidebar.collapsed:hover .nav-badge {
+    display: inline-flex;
+  }
+
+  .sidebar.collapsed:hover .sidebar-footer .sidebar-action {
+    justify-content: flex-start;
+  }
 }
 
 .sidebar-brand {
@@ -630,6 +685,18 @@ code,
   padding: 8px;
   border-top: 1px solid var(--border-subtle);
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-action {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.disconnect-action {
+  color: var(--red-text);
 }
 
 /* ── Main content ── */
@@ -1254,15 +1321,15 @@ textarea.input {
     top: 0;
     bottom: 0;
     z-index: 100;
-    width: var(--sidebar-w);
+    width: var(--sidebar-w-sm);
     transform: translateX(0);
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .sidebar.mobile-hidden {
-    transform: translateX(-100%);
-  }
   .sidebar.collapsed {
     width: var(--sidebar-w-sm);
+  }
+  .sidebar:not(.collapsed) {
+    width: min(var(--sidebar-w), 86vw);
   }
   .mobile-overlay {
     position: fixed;

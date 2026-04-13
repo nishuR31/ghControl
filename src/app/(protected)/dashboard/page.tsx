@@ -1015,7 +1015,7 @@ function Sidebar({
   const collapsed = !sidebarOpen;
 
   return (
-    <aside className={`sidebar ${collapsed ? "collapsed mobile-hidden" : ""}`}>
+    <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       {/* Brand */}
       <div className="sidebar-brand">
         <button
@@ -1094,7 +1094,7 @@ function Sidebar({
       {/* Footer */}
       <div className="sidebar-footer">
         <button
-          className="nav-item"
+          className="nav-item sidebar-action"
           onClick={onSettings}
           title={collapsed ? "Settings" : undefined}
         >
@@ -1102,7 +1102,7 @@ function Sidebar({
           <span className="nav-label">Settings</span>
         </button>
         <button
-          className="nav-item"
+          className="nav-item sidebar-action disconnect-action"
           onClick={onDisconnect}
           style={{ color: "var(--red-text)" }}
           title={collapsed ? "Disconnect" : undefined}
@@ -1364,7 +1364,7 @@ function DashboardContent({
         />
 
         {/* Mobile overlay when sidebar is open */}
-        {sidebar && (
+        {!sidebar && (
           <div className="mobile-overlay" onClick={() => toggleSidebar()} />
         )}
 
