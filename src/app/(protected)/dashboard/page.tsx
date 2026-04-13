@@ -850,7 +850,9 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
             <div className="toggle-row">
               <div>
                 <div className="toggle-label">Use Device Theme</div>
-                <div className="toggle-sub">Auto-sync light/dark with your OS</div>
+                <div className="toggle-sub">
+                  Auto-sync light/dark with your OS
+                </div>
               </div>
               <button
                 className={`toggle ${useDeviceTheme ? "on" : ""}`}
@@ -864,7 +866,9 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
                   className={`theme-pill ${theme === id ? "active" : ""}`}
                   disabled={useDeviceTheme}
                   style={
-                    useDeviceTheme ? { opacity: 0.55, cursor: "not-allowed" } : undefined
+                    useDeviceTheme ?
+                      { opacity: 0.55, cursor: "not-allowed" }
+                    : undefined
                   }
                   onClick={() => setTheme(id)}
                 >
@@ -926,7 +930,9 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
             <div className="toggle-row">
               <div>
                 <div className="toggle-label">Seasonal Tweaks</div>
-                <div className="toggle-sub">Enable seasonal decorative accents</div>
+                <div className="toggle-sub">
+                  Enable seasonal decorative accents
+                </div>
               </div>
               <button
                 className={`toggle ${seasonalFx ? "on" : ""}`}
@@ -936,7 +942,9 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
             <div className="toggle-row">
               <div>
                 <div className="toggle-label">Mouse Animations</div>
-                <div className="toggle-sub">Pointer-reactive highlight effect</div>
+                <div className="toggle-sub">
+                  Pointer-reactive highlight effect
+                </div>
               </div>
               <button
                 className={`toggle ${mouseFx ? "on" : ""}`}
@@ -946,7 +954,9 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
             <div className="toggle-row">
               <div>
                 <div className="toggle-label">Other Animations</div>
-                <div className="toggle-sub">Enable transitions and motion effects</div>
+                <div className="toggle-sub">
+                  Enable transitions and motion effects
+                </div>
               </div>
               <button
                 className={`toggle ${animationsOn ? "on" : ""}`}
@@ -1208,7 +1218,11 @@ function DashboardContent({
 
   useEffect(() => {
     const resolvedTheme =
-      useDeviceTheme ? (systemTheme === "light" ? "light" : "dark") : theme;
+      useDeviceTheme ?
+        systemTheme === "light" ?
+          "light"
+        : "dark"
+      : theme;
     document.documentElement.setAttribute("data-theme", resolvedTheme);
   }, [theme, useDeviceTheme, systemTheme]);
   useEffect(() => {
@@ -1224,7 +1238,10 @@ function DashboardContent({
     );
   }, [seasonalFx]);
   useEffect(() => {
-    document.documentElement.setAttribute("data-mousefx", mouseFx ? "on" : "off");
+    document.documentElement.setAttribute(
+      "data-mousefx",
+      mouseFx ? "on" : "off",
+    );
   }, [mouseFx]);
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -1347,7 +1364,7 @@ function DashboardContent({
         />
 
         {/* Mobile overlay when sidebar is open */}
-        {!sidebar && (
+        {sidebar && (
           <div className="mobile-overlay" onClick={() => toggleSidebar()} />
         )}
 
