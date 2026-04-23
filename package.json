@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "di": "rm -rf .next && next dev",
     "build": "next build",
     "start": "next start",
     "worker": "node src/worker/index.js",
@@ -20,6 +21,7 @@
     "concurrently": "^8.2.2",
     "crypto": "^1.0.1",
     "date-fns": "^3.6.0",
+    "dotenv": "^17.4.2",
     "ioredis": "^5.4.1",
     "lucide-react": "^0.408.0",
     "mongoose": "^8.5.1",

@@ -1,8 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ExternalLink, Shield, Zap, Database, X, Terminal } from "lucide-react";
+import {
+  ArrowRight,
+  ExternalLink,
+  Shield,
+  Zap,
+  Database,
+  X,
+  Terminal,
+} from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
@@ -89,7 +98,10 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="card" style={{ padding: "28px", boxShadow: "var(--shadow-xl)" }}>
+        <div
+          className="card"
+          style={{ padding: "28px", boxShadow: "var(--shadow-xl)" }}
+        >
           <div className="input-group" style={{ marginBottom: 16 }}>
             <label className="input-label">Personal Access Token</label>
             <input
@@ -131,7 +143,7 @@ export default function LoginPage() {
               width: "100%",
             }}
           >
-            {loading ? (
+            {loading ?
               <>
                 <span
                   className="spinner"
@@ -142,12 +154,11 @@ export default function LoginPage() {
                 />
                 Connecting…
               </>
-            ) : (
-              <>
+            : <>
                 <ArrowRight size={15} />
                 Connect to GitHub
               </>
-            )}
+            }
           </button>
 
           <div
@@ -173,7 +184,13 @@ export default function LoginPage() {
               Required scopes
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-              {["repo", "read:user", "admin:repo_hook", "gist", "notifications"].map((s) => (
+              {[
+                "repo",
+                "read:user",
+                "admin:repo_hook",
+                "gist",
+                "notifications",
+              ].map((s) => (
                 <code
                   key={s}
                   style={{
@@ -193,6 +210,7 @@ export default function LoginPage() {
             <a
               href="https://github.com/settings/tokens/new"
               target="_blank"
+              rel="noopener noreferrer"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -249,7 +267,7 @@ export default function LoginPage() {
             ))}
           </div>
 
-          <a
+          <Link
             href="/"
             style={{
               marginTop: 14,
@@ -259,7 +277,7 @@ export default function LoginPage() {
             }}
           >
             ← Back to home
-          </a>
+          </Link>
 
           <div
             style={{
@@ -268,13 +286,34 @@ export default function LoginPage() {
               borderTop: "1px solid var(--border-subtle)",
               display: "flex",
               flexWrap: "wrap",
+              justifyContent: "space-around",
               gap: 10,
             }}
           >
-            <a href="/docs" style={{ fontSize: 12, color: "var(--text-secondary)" }}>Docs</a>
-            <a href="/help" style={{ fontSize: 12, color: "var(--text-secondary)" }}>Help</a>
-            <a href="/privacy" style={{ fontSize: 12, color: "var(--text-secondary)" }}>Privacy</a>
-            <a href="/terms" style={{ fontSize: 12, color: "var(--text-secondary)" }}>Terms</a>
+            <Link
+              href="/docs"
+              style={{ fontSize: 12, color: "var(--text-secondary)" }}
+            >
+              Docs
+            </Link>
+            <Link
+              href="/help"
+              style={{ fontSize: 12, color: "var(--text-secondary)" }}
+            >
+              Help
+            </Link>
+            <Link
+              href="/privacy"
+              style={{ fontSize: 12, color: "var(--text-secondary)" }}
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/terms"
+              style={{ fontSize: 12, color: "var(--text-secondary)" }}
+            >
+              Terms
+            </Link>
           </div>
         </div>
       </div>

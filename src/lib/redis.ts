@@ -2,6 +2,32 @@ import Redis from "ioredis";
 
 type RedisTls = { rejectUnauthorized?: boolean };
 
+const REDIS_OP_TIMEOUT_MS = 300;
+
+let redisDisabled = false;
+
+function isRedisNetworkError(err: unknown): boolean {
+  if (!err || typeof err !== "object") return false;
+  const code =
+    "code" in err ? String((err as { code?: unknown }).code || "") : "";
+  return (
+    code === "ENOTFOUND" || code === "EAI_AGAIN" || code === "ECONNREFUSED"
+  );
+}
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<T>((_, reject) => {
+    timer = setTimeout(() => {
+      reject(new Error("Redis operation timed out"));
+    }, timeoutMs);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
+}
+
 function envFlag(name: string): boolean | null {
   const value = process.env[name];
   if (!value) return null;
@@ -52,32 +78,66 @@ declare global {
   var _redis: Redis | null;
 }
 
-export function getRedis(): Redis {
+function disableRedis(err?: unknown) {
+  if (redisDisabled) return;
+  redisDisabled = true;
+
+  if (global._redis) {
+    try {
+      global._redis.removeAllListeners();
+      global._redis.disconnect(true);
+    } catch {
+      /* silent */
+    }
+  }
+
+  global._redis = null;
+
+  if (err && !isRedisNetworkError(err)) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[Redis]", message);
+  }
+}
+
+export function getRedis(): Redis | null {
+  if (redisDisabled) return null;
   if (global._redis) return global._redis;
 
   const { url, ...options } = getRedisConnectionOptions();
   const redis = new Redis(url, options);
 
   redis.on("error", (err) => {
-    // Silent on ECONNREFUSED during build — only log in runtime
-    if (!err.message.includes("ECONNREFUSED")) {
-      console.error("[Redis]", err.message);
+    if (isRedisNetworkError(err)) {
+      disableRedis(err);
+      return;
     }
+    console.error("[Redis]", err.message);
   });
 
   global._redis = redis;
   return redis;
 }
 
+async function runRedisOp<T>(op: () => Promise<T>, fallback: T): Promise<T> {
+  const redis = getRedis();
+  if (!redis) return fallback;
+
+  try {
+    return await withTimeout(op(), REDIS_OP_TIMEOUT_MS);
+  } catch (err) {
+    if (isRedisNetworkError(err)) disableRedis(err);
+    return fallback;
+  }
+}
+
 // Cache helpers
 export async function cacheGet<T>(key: string): Promise<T | null> {
-  try {
+  return runRedisOp(async () => {
     const redis = getRedis();
+    if (!redis) return null;
     const val = await redis.get(key);
     return val ? JSON.parse(val) : null;
-  } catch {
-    return null;
-  }
+  }, null);
 }
 
 export async function cacheSet(
@@ -85,29 +145,29 @@ export async function cacheSet(
   value: unknown,
   ttlSeconds = 60,
 ): Promise<void> {
-  try {
+  await runRedisOp(async () => {
     const redis = getRedis();
+    if (!redis) return null;
     await redis.setex(key, ttlSeconds, JSON.stringify(value));
-  } catch {
-    /* silent */
-  }
+    return null;
+  }, null);
 }
 
 export async function cacheDel(key: string): Promise<void> {
-  try {
+  await runRedisOp(async () => {
     const redis = getRedis();
+    if (!redis) return null;
     await redis.del(key);
-  } catch {
-    /* silent */
-  }
+    return null;
+  }, null);
 }
 
 export async function cacheDelPattern(pattern: string): Promise<void> {
-  try {
+  await runRedisOp(async () => {
     const redis = getRedis();
+    if (!redis) return null;
     const keys = await redis.keys(pattern);
     if (keys.length) await redis.del(...keys);
-  } catch {
-    /* silent */
-  }
+    return null;
+  }, null);
 }

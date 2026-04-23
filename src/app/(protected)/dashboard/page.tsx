@@ -1018,6 +1018,18 @@ function Sidebar({
   const { sidebarOpen, toggleSidebar } = useApp();
   const collapsed = !sidebarOpen;
 
+  function handleNavClick(id: string) {
+    if (
+      collapsed &&
+      typeof window !== "undefined" &&
+      window.innerWidth <= 640
+    ) {
+      toggleSidebar();
+      return;
+    }
+    setTab(id);
+  }
+
   return (
     <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       {/* Brand */}
@@ -1084,7 +1096,7 @@ function Sidebar({
               <button
                 key={id}
                 className={`nav-item ${tab === id ? "active" : ""}`}
-                onClick={() => setTab(id)}
+                onClick={() => handleNavClick(id)}
                 title={collapsed ? label : undefined}
               >
                 <Icon size={14} className="nav-icon" />

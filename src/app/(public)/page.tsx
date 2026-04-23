@@ -1,15 +1,26 @@
 "use client";
 
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useEffect } from "react";
 import { GitBranch, GitPullRequest, Zap, Shield } from "lucide-react";
+import { GitHubLoader } from "@/components/landing/github-loader";
+
+const StatusDock = dynamic(() => import("@/components/landing/status-dock"), {
+  loading: () => (
+    <div className="status-dock status-dock-loading" aria-hidden="true">
+      <GitHubLoader label="Checking server health" />
+    </div>
+  ),
+});
 
 export default function HomePage() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://gh-control.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gh-control.app";
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -33,7 +44,7 @@ export default function HomePage() {
   }, [isAuthenticated, router]);
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-app)" }}>
+    <div className="landing-shell">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -54,8 +65,18 @@ export default function HomePage() {
             fontWeight: 700,
             color: "var(--text-primary)",
             letterSpacing: "-.01em",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 10,
           }}
         >
+          <Image
+            src="/logo.avif"
+            alt="GH Control logo"
+            width={28}
+            height={28}
+            priority
+          />
           GH Control
         </h1>
         <button
@@ -510,14 +531,33 @@ export default function HomePage() {
             marginBottom: 8,
           }}
         >
-          <a href="/docs" style={{ color: "var(--text-secondary)" }}>Docs</a>
-          <a href="/help" style={{ color: "var(--text-secondary)" }}>Help</a>
-          <a href="/privacy" style={{ color: "var(--text-secondary)" }}>Privacy</a>
-          <a href="/terms" style={{ color: "var(--text-secondary)" }}>Terms</a>
-          <a href="/login" style={{ color: "var(--text-secondary)" }}>Login</a>
+          <Link href="/docs" style={{ color: "var(--text-secondary)" }}>
+            Docs
+          </Link>
+          <Link href="/help" style={{ color: "var(--text-secondary)" }}>
+            Help
+          </Link>
+          <Link href="/privacy" style={{ color: "var(--text-secondary)" }}>
+            Privacy
+          </Link>
+          <Link href="/terms" style={{ color: "var(--text-secondary)" }}>
+            Terms
+          </Link>
+          <Link href="/login" style={{ color: "var(--text-secondary)" }}>
+            Login
+          </Link>
         </div>
-        © 2026 GH Control. Built with Next.js, Redis, MongoDB & BullMQ.
+        <div className="footer-health-note">
+          Live checks:{" "}
+          <Link href="/api/health" style={{ textDecoration: "underline" }}>
+            /api/health
+          </Link>{" "}
+          powers the dock below.
+        </div>
+        <p>© 2026 GH Control. Built with Next.js, Redis, MongoDB & BullMQ.</p>
       </div>
+
+      <StatusDock />
     </div>
   );
 }

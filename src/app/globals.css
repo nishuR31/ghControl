@@ -848,6 +848,245 @@ code,
   flex-wrap: wrap;
 }
 
+/* ── Landing page helpers ── */
+.landing-shell {
+  min-height: 100vh;
+  background: var(--bg-app);
+  padding-bottom: 104px;
+}
+
+.landing-loading-shell {
+  display: grid;
+  place-items: center;
+}
+
+.github-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--bg-raised) 88%, transparent);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(12px);
+}
+
+.github-loader-svg {
+  width: 40px;
+  height: 40px;
+  overflow: visible;
+}
+
+.github-loader-ring,
+.github-loader-path,
+.github-loader-glyph {
+  fill: none;
+  stroke: url(#gh-loader-stroke);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.github-loader-ring {
+  stroke-dasharray: 34 18;
+  animation: loader-spin 1.4s linear infinite;
+  transform-origin: 60px 60px;
+}
+
+.github-loader-path {
+  opacity: 0.8;
+}
+
+.github-loader-glyph {
+  opacity: 0.35;
+}
+
+.github-loader-node {
+  fill: var(--accent-text);
+  transform-origin: center;
+  animation: loader-pulse 1.4s ease-in-out infinite;
+}
+
+.github-loader .node-b {
+  animation-delay: 0.18s;
+}
+
+.github-loader .node-c {
+  animation-delay: 0.36s;
+}
+
+.status-dock {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 16px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  max-width: min(calc(100vw - 32px), 760px);
+}
+
+.status-dock-loading {
+  pointer-events: none;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-raised) 88%, transparent);
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(12px);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-pill-positive {
+  border-color: var(--green-border);
+}
+
+.status-pill-negative {
+  border-color: var(--red-border);
+}
+
+.status-pill-label {
+  color: var(--text-primary);
+}
+
+.status-pill-metric {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.status-pill-connection {
+  color: var(--text-primary);
+}
+
+.status-pill-battery {
+  color: var(--amber-text);
+}
+
+.status-pill-infra {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-icon-ok {
+  color: var(--green);
+}
+
+.status-icon-bad {
+  color: var(--red);
+}
+
+.status-text-lg {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.status-text-good {
+  color: var(--green-text);
+}
+
+.status-text-bad {
+  color: var(--red-text);
+}
+
+.status-text-muted {
+  color: var(--text-secondary);
+}
+
+.footer-health-note {
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  background: rgba(168, 85, 247, 0.15);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  display: inline-block;
+}
+
+.footer-health-note a {
+  color: var(--text-primary);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.footer-health-note a:hover {
+  color: #a855f7;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.02);
+}
+
+.status-dot-ok {
+  background: var(--green);
+}
+
+.status-dot-warn {
+  background: var(--amber);
+}
+
+.status-dot-bad {
+  background: var(--red);
+}
+
+@media (max-width: 640px) {
+  .status-dock {
+    left: 50%;
+    right: auto;
+    transform: none;
+    bottom: 12px;
+    transform: translateX(-50%);
+    justify-content: center;
+    max-width: none;
+    gap: 6px;
+  }
+
+  .status-pill {
+    min-height: 34px;
+    padding: 0 10px;
+  }
+
+  .status-text-lg {
+    display: none;
+  }
+}
+
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loader-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
 /* Inset card (used inside content areas) */
 .inset-card {
   background: var(--bg-elevated);
@@ -1315,6 +1554,9 @@ textarea.input {
 }
 
 @media (max-width: 640px) {
+  .app-shell {
+    padding-left: var(--sidebar-w-sm);
+  }
   .sidebar {
     position: fixed;
     left: 0;
@@ -1340,6 +1582,7 @@ textarea.input {
   }
   .main-area {
     width: 100%;
+    padding-left: 0;
   }
   .stat-grid {
     grid-template-columns: 1fr 1fr !important;
