@@ -57,6 +57,7 @@ export async function logActivity(input: ActivityInput) {
 
   try {
     const redis = getRedis();
+    if (!redis) return;
     await redis.lpush(REDIS_ACTIVITY_KEY, JSON.stringify(entry));
     await redis.ltrim(
       REDIS_ACTIVITY_KEY,
@@ -93,6 +94,7 @@ export async function getRecentActivity(filter?: { type?: string }) {
   const type = filter?.type?.trim();
   try {
     const redis = getRedis();
+    if (!redis) throw new Error("redis_unavailable");
     const rows = await redis.lrange(
       REDIS_ACTIVITY_KEY,
       0,
